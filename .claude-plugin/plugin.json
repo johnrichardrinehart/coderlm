@@ -15,6 +15,5 @@
     "recursive-language-model",
     "codebase-exploration",
     "symbol-extraction"
-  ],
-  "postInstall": "echo 'CodeRLM installed. Build the server: cd server && cargo build --release'"
+  ]
 }
