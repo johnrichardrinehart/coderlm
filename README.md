@@ -1,6 +1,6 @@
-# CoderLM
+# CodeRLM
 
-CoderLM applies the [Recursive Language Model](https://arxiv.org/abs/2512.24601) (RLM) pattern to codebases. A Rust server indexes a project's files and symbols via tree-sitter, then exposes a JSON API that LLM agents query for targeted context — structure, symbols, source code, callers, tests, and grep. Instead of loading an entire codebase into context or relying on heuristic file scanning, the agent asks the server for exactly what it needs.
+CodeRLM applies the [Recursive Language Model](https://arxiv.org/abs/2512.24601) (RLM) pattern to codebases. A Rust server indexes a project's files and symbols via tree-sitter, then exposes a JSON API that LLM agents query for targeted context — structure, symbols, source code, callers, tests, and grep. Instead of loading an entire codebase into context or relying on heuristic file scanning, the agent asks the server for exactly what it needs.
 
 An integrated Claude Code skill (`.claude/skills/coderlm/`) wraps the API with a Python CLI and a structured workflow, so Claude Code can explore unfamiliar codebases without reading everything into context.
 
@@ -22,7 +22,7 @@ This project builds on two prior works:
 - **"Recursive Language Models"** by Alex L. Zhang, Tim Kraska, and Omar Khattab (MIT CSAIL, 2025). The paper introduces the RLM framework for processing inputs far beyond model context windows by treating extended prompts as external data that the model recursively examines.
   > Zhang, A. L., Kraska, T., & Khattab, O. (2025). Recursive Language Models. *arXiv preprint* [arXiv:2512.24601](https://arxiv.org/abs/2512.24601).
 
-- **[brainqub3/claude_code_RLM](https://github.com/brainqub3/claude_code_RLM)** — A minimal RLM implementation for Claude Code by brainqub3 that applies the pattern to document processing via a persistent Python REPL. CoderLM adapts this approach from documents to codebases, replacing the Python REPL with a purpose-built Rust server and tree-sitter indexing.
+- **[brainqub3/claude_code_RLM](https://github.com/brainqub3/claude_code_RLM)** — A minimal RLM implementation for Claude Code by brainqub3 that applies the pattern to document processing via a persistent Python REPL. CodeRLM adapts this approach from documents to codebases, replacing the Python REPL with a purpose-built Rust server and tree-sitter indexing.
 
 ## Repository Layout
 
