@@ -15,12 +15,12 @@
     ],
     "UserPromptSubmit": [
       {
-        "matcher": "(?i)(how does|what calls|who calls|where does|where is|trace|callers?|execution path|error com|find the func|find where|understand.*code|explore.*code|map out|navigate|cross.?file|what tests|implementation of|defined in|originat)",
+        "matcher": "(?i)(how does|what calls|who calls|where does|where is|trace|callers?|execution path|error com|investigate|find the func|find where|understand.*code|explore.*code|map out|navigate|cross.?file|what tests|implementation of|defined in|originat)",
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "A coderlm-server is running with a tree-sitter index of this codebase. Before using grep or reading entire files, check if coderlm can answer this more precisely: `python3 skills/coderlm/scripts/coderlm_cli.py search \"term\"` for symbol lookup, `impl` for exact function bodies, `callers` for call sites, `tests` for test coverage. These return exact source code from the index — faster and more precise than scanning files.",
-            "description": "Nudge Claude toward coderlm for structural code questions"
+            "prompt": "Use the coderlm skill for all code navigation in supported languages (Rust, Python, TypeScript, JavaScript, Go). Use Read only for config files, markdown, and unsupported languages.",
+            "description": "Reinforce coderlm as primary navigation tool"
           }
         ]
       }

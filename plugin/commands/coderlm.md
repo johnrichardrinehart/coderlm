@@ -11,13 +11,13 @@ You have access to a tree-sitter-backed index server that knows the structure of
 
 ```bash
 # Initialize a session (do this once per project)
-python3 .claude/skills/coderlm/scripts/coderlm_cli.py init
+python3 .claude/coderlm_state/coderlm_cli.py init
 ```
 
 ## Tools
 
 ```bash
-CLI=".claude/skills/coderlm/scripts/coderlm_cli.py"
+CLI=".claude/coderlm_state/coderlm_cli.py"
 
 python3 $CLI structure                          # File tree + module overview
 python3 $CLI search "symbol_name"               # Find symbols by name

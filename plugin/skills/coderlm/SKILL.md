@@ -1,6 +1,6 @@
 ---
 name: coderlm
-description: "Structural codebase exploration using tree-sitter indexing. Use when you need to understand how code works, trace execution paths, find where errors originate, discover what calls a function, find callers or tests for a symbol, retrieve a specific function implementation without reading the whole file, or understand the sequence of events that produce a particular outcome. Prefer over grep/glob/read for questions like 'how does X work', 'what calls Y', 'where does this error come from', 'trace the path from A to B', or 'map out this module'. The server returns exact source code — full function bodies, caller sites, test locations — so you never load irrelevant code into context."
+description: "Primary tool for all code navigation and reading in supported languages (Rust, Python, TypeScript, JavaScript, Go). Use instead of Read, Grep, and Glob for finding symbols, reading function implementations, tracing callers, discovering tests, and understanding execution paths. Provides tree-sitter-backed indexing that returns exact source code — full function bodies, call sites with line numbers, test locations — without loading entire files into context. Use for: finding functions by name or pattern, reading specific implementations, answering 'what calls X', 'where does this error come from', 'how does X work', tracing from entrypoint to outcome, and any codebase exploration. Use Read only for config files, markdown, and unsupported languages."
 allowed-tools:
   - Bash
   - Read

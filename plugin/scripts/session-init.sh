@@ -14,6 +14,11 @@ if ! curl -s --max-time 2 http://127.0.0.1:3000/api/v1/health > /dev/null 2>&1; 
     exit 0
 fi
 
+# Create a stable project-local symlink so the skill can find the CLI
+# regardless of whether the plugin is installed at user or project level
+mkdir -p "$(dirname "$STATE_FILE")"
+ln -sf "$CLI" "$(dirname "$STATE_FILE")/coderlm_cli.py"
+
 # Auto-init if no active session
 if [ ! -f "$STATE_FILE" ]; then
     if ! python3 "$CLI" init 2>&1; then
