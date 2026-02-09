@@ -3,11 +3,11 @@
 # coderlm-daemon.sh — Start/stop/restart the coderlm-server as a background daemon.
 #
 # Usage:
-#   ./scripts/coderlm-daemon.sh start [OPTIONS]
-#   ./scripts/coderlm-daemon.sh stop
-#   ./scripts/coderlm-daemon.sh restart [OPTIONS]
-#   ./scripts/coderlm-daemon.sh status
-#   ./scripts/coderlm-daemon.sh logs [-f]
+#   ./server/coderlm-daemon.sh start [OPTIONS]
+#   ./server/coderlm-daemon.sh stop
+#   ./server/coderlm-daemon.sh restart [OPTIONS]
+#   ./server/coderlm-daemon.sh status
+#   ./server/coderlm-daemon.sh logs [-f]
 #
 # Options (passed through to coderlm-server):
 #   --port PORT           Port to listen on (default: 3000)

@@ -1,0 +1,42 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/scripts/session-init.sh\"",
+            "timeout": 10000,
+            "description": "Check if coderlm-server is running, auto-create session"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "(?i)(how does|what calls|who calls|where does|where is|trace|callers?|execution path|error com|find the func|find where|understand.*code|explore.*code|map out|navigate|cross.?file|what tests|implementation of|defined in|originat)",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "A coderlm-server is running with a tree-sitter index of this codebase. Before using grep or reading entire files, check if coderlm can answer this more precisely: `python3 skills/coderlm/scripts/coderlm_cli.py search \"term\"` for symbol lookup, `impl` for exact function bodies, `callers` for call sites, `tests` for test coverage. These return exact source code from the index — faster and more precise than scanning files.",
+            "description": "Nudge Claude toward coderlm for structural code questions"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/scripts/session-stop.sh\"",
+            "timeout": 5000,
+            "description": "Clean up coderlm session"
+          }
+        ]
+      }
+    ]
+  }
+}

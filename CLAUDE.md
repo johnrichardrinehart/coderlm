@@ -4,20 +4,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-CoderLM applies the Recursive Language Model (RLM) pattern to codebases. A Rust server indexes a project's files and symbols (via tree-sitter), then exposes a JSON API that LLM agents query for targeted context — structure, symbols, source, callers, tests, grep. An agent skill (`.claude/skills/coderlm/`) wraps the API with a Python CLI and a structured workflow so Claude Code can explore unfamiliar codebases without loading everything into context.
+CoderLM applies the Recursive Language Model (RLM) pattern to codebases. A Rust server indexes a project's files and symbols (via tree-sitter), then exposes a JSON API that LLM agents query for targeted context — structure, symbols, source, callers, tests, grep. An agent skill (`plugin/skills/coderlm/`) wraps the API with a Python CLI and a structured workflow so Claude Code can explore unfamiliar codebases without loading everything into context.
 
 ## Repository Layout
 
 - `server/` — Rust codebase (the only code that gets built). Has its own `.git`.
-- `.claude/skills/coderlm/` — Claude Code skill definition + Python CLI wrapper
-- `.claude/agents/` — Tiered sub-agents: `coderlm-scout` (Haiku, quick lookups), `coderlm-analyst` (Sonnet, multi-file tracing), `coderlm-architect` (Opus, architectural reasoning)
-- `.claude-plugin/` — Plugin manifest for `claude plugin install .`
-- `hooks/` — Claude Code hooks (SessionStart, UserPromptSubmit)
-- `commands/` — Slash command definitions
-- `scripts/` — Daemon management and hook scripts
-- `rlm-claude-code/` — Reference RLM plugin (Python/Go, for comparison)
-- `modal_repl.py` — Original RLM research implementation (reference only)
-- `brainqub3/` — Earlier document-focused RLM approach (reference only)
+- `plugin/` — Self-contained Claude Code plugin root
+  - `plugin/skills/coderlm/` — Skill definition + Python CLI wrapper
+  - `plugin/hooks/` — Claude Code hooks (SessionStart, UserPromptSubmit, PreCompact, Stop)
+  - `plugin/commands/` — Slash command definitions
+  - `plugin/scripts/` — Hook scripts (session lifecycle)
+  - `plugin/.claude-plugin/` — Plugin manifest (`plugin.json`)
+- `.claude-plugin/` — Marketplace manifest (`marketplace.json`), points to `plugin/`
 
 ## Build & Run
 
@@ -92,11 +90,13 @@ All endpoints under `/api/v1/`. Session-scoped endpoints require `X-Session-Id` 
 The skill wraps the API with a Python CLI (no external dependencies):
 
 ```bash
-python3 .claude/skills/coderlm/scripts/coderlm_cli.py <command> [args]
+python3 plugin/skills/coderlm/scripts/coderlm_cli.py <command> [args]
 ```
 
-Session state cached in `.claude/coderlm_state/session.json`. The CLI must be run from the project root that was indexed. Key commands: `init`, `structure`, `symbols`, `search`, `impl`, `callers`, `tests`, `grep` (with `--scope code`), `peek`, `save-annotations`, `load-annotations`, `cleanup`. Full reference in `.claude/skills/coderlm/references/api-reference.md`.
+The `.claude/skills/coderlm/scripts/coderlm_cli.py` path also works when running locally (via the workaround copy).
+
+Session state cached in `.claude/coderlm_state/session.json`. The CLI must be run from the project root that was indexed. Key commands: `init`, `structure`, `symbols`, `search`, `impl`, `callers`, `tests`, `grep` (with `--scope code`), `peek`, `save-annotations`, `load-annotations`, `cleanup`. Full reference in `plugin/skills/coderlm/references/api-reference.md`.
 
 ## Workflow: Codebase Exploration
 
-Always use `/coderlm` (the coderlm skill) when exploring this codebase. It provides indexed lookups for symbols, implementations, callers, and tests — much faster and more precise than globbing/grepping/reading files manually. Start with `init`, then use `search`, `impl`, `callers`, `grep`, etc. See `.claude/skills/coderlm/` for full reference.
+Always use `/coderlm` (the coderlm skill) when exploring this codebase. It provides indexed lookups for symbols, implementations, callers, and tests — much faster and more precise than globbing/grepping/reading files manually. Start with `init`, then use `search`, `impl`, `callers`, `grep`, etc. See `plugin/skills/coderlm/` for full reference.

@@ -2,7 +2,7 @@
 
 CodeRLM applies the [Recursive Language Model](https://arxiv.org/abs/2512.24601) (RLM) pattern to codebases. A Rust server indexes a project's files and symbols via tree-sitter, then exposes a JSON API that LLM agents query for targeted context — structure, symbols, source code, callers, tests, and grep. Instead of loading an entire codebase into context or relying on heuristic file scanning, the agent asks the server for exactly what it needs.
 
-An integrated Claude Code skill (`.claude/skills/coderlm/`) wraps the API with a Python CLI and a structured workflow, so Claude Code can explore unfamiliar codebases without reading everything into context.
+An integrated Claude Code skill (`plugin/skills/coderlm/`) wraps the API with a Python CLI and a structured workflow, so Claude Code can explore unfamiliar codebases without reading everything into context.
 
 ## How It Works
 
@@ -11,7 +11,6 @@ The RLM pattern treats a codebase as external data that a root language model ca
 1. **Index** — The server walks the project directory (respecting `.gitignore`), parses every supported file with tree-sitter, and builds a symbol table with cross-references.
 2. **Query** — The agent queries the index: search symbols by name, list functions in a file, find callers of a function, grep for patterns, retrieve exact source code.
 3. **Read** — The server returns the exact code requested — full function implementations, variable lists, line ranges — so the agent never guesses.
-4. **Recurse** — A sub-agent (Haiku) can be delegated focused analysis of specific files, returning structured findings without loading code into the root agent's context.
 
 This replaces the typical glob/grep/read cycle with precise, index-backed lookups.
 
@@ -28,14 +27,13 @@ This project builds on two prior works:
 
 ```
 server/                          Rust server (the only built artifact)
-.claude/skills/coderlm/          Claude Code skill + Python CLI wrapper
-.claude/agents/                  Tiered sub-agents (scout/analyst/architect)
-.claude-plugin/                  Plugin manifest for `claude plugin install`
-hooks/                           Claude Code hooks (SessionStart, UserPromptSubmit)
-commands/                        Slash command definitions
-scripts/                         Daemon management and hook scripts
-modal_repl.py                    Original RLM research implementation (reference)
-brainqub3/                       brainqub3's document-focused RLM (reference)
+plugin/                          Self-contained Claude Code plugin
+  plugin/skills/coderlm/         Skill definition + Python CLI wrapper
+  plugin/hooks/                  Claude Code hooks (SessionStart, UserPromptSubmit, PreCompact, Stop)
+  plugin/commands/               Slash command definitions
+  plugin/scripts/                Hook scripts (session lifecycle)
+  plugin/.claude-plugin/         Plugin manifest (plugin.json)
+.claude-plugin/                  Marketplace manifest (points to plugin/)
 ```
 
 ## Quick Start
@@ -74,9 +72,9 @@ cd server && cargo build --release
 cargo run --release -- serve /path/to/your/project
 
 # 4. (Optional) Run as a daemon
-./scripts/coderlm-daemon.sh start
-./scripts/coderlm-daemon.sh status
-./scripts/coderlm-daemon.sh stop
+./server/coderlm-daemon.sh start
+./server/coderlm-daemon.sh status
+./server/coderlm-daemon.sh stop
 ```
 
 ### Verify the Server
@@ -97,9 +95,9 @@ Once the server is running, invoke the skill:
 Or use the CLI directly:
 
 ```bash
-python3 .claude/skills/coderlm/scripts/coderlm_cli.py init
-python3 .claude/skills/coderlm/scripts/coderlm_cli.py search "handler"
-python3 .claude/skills/coderlm/scripts/coderlm_cli.py impl run_server --file src/main.rs
+python3 plugin/skills/coderlm/scripts/coderlm_cli.py init
+python3 plugin/skills/coderlm/scripts/coderlm_cli.py search "handler"
+python3 plugin/skills/coderlm/scripts/coderlm_cli.py impl run_server --file src/main.rs
 ```
 
 ### Updating
@@ -116,7 +114,6 @@ cargo build --release
 When installed, CodeRLM gives Claude Code:
 
 - **`/coderlm` skill** — Structured workflow for codebase exploration (init → structure → search → impl → callers → synthesize)
-- **Tiered sub-agents** — `coderlm-scout` (Haiku, quick lookups), `coderlm-analyst` (Sonnet, multi-file tracing), `coderlm-architect` (Opus, architectural reasoning)
 - **SessionStart hook** — Auto-detects a running server and initializes sessions
 - **UserPromptSubmit hook** — Guides Claude to use indexed lookups instead of glob/grep/read
 - **Zero Python dependencies** — The CLI wrapper uses only the Python standard library

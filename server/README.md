@@ -166,7 +166,7 @@ curl localhost:3000/api/v1/history
 - **One server is enough.** Projects are auto-registered on session creation. No need to run separate instances per repo.
 - **Annotations are per-project.** File definitions, symbol definitions, and marks set by one session are visible to all sessions on the same project. This lets a swarm of agents build shared understanding.
 - **Filesystem watcher is automatic.** When you edit files in a project, the server detects changes within ~500ms and re-indexes. No restart needed.
-- **Stopping a server loses annotations.** Definitions and marks are in-memory only. They are rebuilt from scratch on restart. A future version may persist them to disk.
+- **Annotations can be persisted.** Use `save-annotations` to write definitions and marks to `.coderlm/annotations.json` in the project root. Annotations are auto-loaded when a new session is created for that project. The `Stop` hook also auto-saves annotations before cleanup.
 
 ## Supported languages (tree-sitter)
 

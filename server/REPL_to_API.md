@@ -300,7 +300,7 @@ The `pattern` parameter accepts full Rust regex syntax.
 
 ## chunk_indices
 
-Compute byte-offset chunk boundaries for a file. Useful for splitting large files into pieces for sub-agent processing.
+Compute byte-offset chunk boundaries for a file. Useful for splitting large files into pieces for incremental processing.
 
 | REPL operation                          | Method | Endpoint         | Params                                  |
 |-----------------------------------------|--------|------------------|-----------------------------------------|
