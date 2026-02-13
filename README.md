@@ -44,10 +44,11 @@ The fastest way to get started. Requires Rust toolchain for building the server.
 
 ```bash
 # 1. Install the plugin (registers skill, hooks, and slash commands)
-claude plugin install github:JaredStewart/coderlm
+claude plugin marketplace add johnrichardrinehart/coderlm
+claude plugin install coderlm@coderlm
 
 # 2. Build the server
-cd ~/.claude/plugins/cache/coderlm/coderlm/latest/server
+cd ~/.claude/plugins/marketplaces/coderlm/server
 cargo build --release
 
 # 3. Start the server (in a separate terminal)
@@ -75,6 +76,22 @@ cargo run --release -- serve /path/to/your/project
 ./server/coderlm-daemon.sh start
 ./server/coderlm-daemon.sh status
 ./server/coderlm-daemon.sh stop
+```
+
+### Option C: Install with Nix
+
+```bash
+# Build and run the server
+nix run github:johnrichardrinehart/coderlm -- serve /path/to/project
+
+# Install plugin + replace scripts with Nix-wrapped versions
+claude plugin marketplace add johnrichardrinehart/coderlm
+claude plugin install coderlm@coderlm
+
+# Copy wrapped scripts into plugin cache
+CACHE=$(echo ~/.claude/plugins/cache/coderlm/coderlm/*/scripts)
+cp "$(nix build .#session-init --print-out-paths)/bin/session-init.sh" "$CACHE/"
+cp "$(nix build .#session-stop --print-out-paths)/bin/session-stop.sh" "$CACHE/"
 ```
 
 ### Verify the Server
@@ -105,7 +122,7 @@ python3 plugin/skills/coderlm/scripts/coderlm_cli.py impl run_server --file src/
 ```bash
 claude plugin update coderlm
 # Rebuild the server after updating
-cd ~/.claude/plugins/cache/coderlm/coderlm/latest/server
+cd ~/.claude/plugins/marketplaces/coderlm/server
 cargo build --release
 ```
 
