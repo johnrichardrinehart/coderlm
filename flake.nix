@@ -4,12 +4,14 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
+    claude-code-nix.url = "github:sadjow/claude-code-nix";
   };
 
-  outputs = { self, nixpkgs, flake-utils }:
+  outputs = { self, nixpkgs, flake-utils, claude-code-nix }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
+        claude-code = claude-code-nix.packages.${system}.default;
 
         # --- Rust server ---
         coderlm-server = pkgs.rustPlatform.buildRustPackage {
@@ -56,9 +58,11 @@
         install-plugin = pkgs.writeShellScriptBin "install-plugin" ''
           set -euo pipefail
 
+          CLAUDE="$(command -v claude 2>/dev/null || echo ${claude-code}/bin/claude)"
+
           echo "[coderlm] Installing plugin via marketplace..."
-          claude plugin marketplace add johnrichardrinehart/coderlm
-          claude plugin install coderlm@coderlm
+          "$CLAUDE" plugin marketplace add johnrichardrinehart/coderlm
+          "$CLAUDE" plugin install coderlm@coderlm
 
           echo "[coderlm] Patching cached scripts with Nix-wrapped versions..."
           CACHE_DIR=$(echo ~/.claude/plugins/cache/coderlm/coderlm/*/scripts)
