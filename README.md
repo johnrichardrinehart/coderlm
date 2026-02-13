@@ -81,17 +81,11 @@ cargo run --release -- serve /path/to/your/project
 ### Option C: Install with Nix
 
 ```bash
-# Build and run the server
+# Install plugin and patch scripts with Nix-wrapped versions (curl, python3 on PATH)
+nix run github:johnrichardrinehart/coderlm#install-plugin
+
+# Start the server (in a separate terminal)
 nix run github:johnrichardrinehart/coderlm -- serve /path/to/project
-
-# Install plugin + replace scripts with Nix-wrapped versions
-claude plugin marketplace add johnrichardrinehart/coderlm
-claude plugin install coderlm@coderlm
-
-# Copy wrapped scripts into plugin cache
-CACHE=$(echo ~/.claude/plugins/cache/coderlm/coderlm/*/scripts)
-cp "$(nix build .#session-init --print-out-paths)/bin/session-init.sh" "$CACHE/"
-cp "$(nix build .#session-stop --print-out-paths)/bin/session-stop.sh" "$CACHE/"
 ```
 
 ### Verify the Server

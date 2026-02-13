@@ -52,11 +52,32 @@
           runtimeInputs = with pkgs; [ curl coreutils ];
         };
 
+        # --- Plugin installer ---
+        install-plugin = pkgs.writeShellScriptBin "install-plugin" ''
+          set -euo pipefail
+
+          echo "[coderlm] Installing plugin via marketplace..."
+          claude plugin marketplace add johnrichardrinehart/coderlm
+          claude plugin install coderlm@coderlm
+
+          echo "[coderlm] Patching cached scripts with Nix-wrapped versions..."
+          CACHE_DIR=$(echo ~/.claude/plugins/cache/coderlm/coderlm/*/scripts)
+          if [ ! -d "$CACHE_DIR" ]; then
+            echo "[coderlm] Error: plugin cache directory not found at $CACHE_DIR" >&2
+            exit 1
+          fi
+
+          cp ${session-init}/bin/session-init.sh "$CACHE_DIR/"
+          cp ${session-stop}/bin/session-stop.sh "$CACHE_DIR/"
+
+          echo "[coderlm] Done. Restart Claude Code to activate."
+        '';
+
       in {
         packages = {
           default = coderlm-server;
           server = coderlm-server;
-          inherit session-init session-stop coderlm-daemon;
+          inherit session-init session-stop coderlm-daemon install-plugin;
         };
 
         devShells.default = pkgs.mkShell {
